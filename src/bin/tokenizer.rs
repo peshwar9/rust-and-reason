@@ -11,7 +11,7 @@
 use std::collections::HashMap;
 use std::env::args;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{BufRead, BufReader};
 use thiserror::Error;
 
 pub struct Tokenizer {
@@ -33,43 +33,33 @@ impl Tokenizer {
         }
     }
     // Load from a reader (easy to test)
-    pub fn load_vocab(&mut self) -> Result<(), TokenizerError> {
+    pub fn load_vocab<R: BufRead>(&mut self, reader: R) -> Result<(), TokenizerError> {
         //Read file and populate word_to_id and id_to_word
-        let f = File::open("vocab.txt")?;
-        let reader = std::io::BufReader::new(f);
-        // for line_result in reader.lines() {
-        //     let line = line_result?.trim().to_string();
-        //     if line.is_empty() {
-        //         continue;
-        //     }
-        //     let id = self.id_to_word.len();
-        //     self.word_to_id.insert(line.clone(), id);
-        //     self.id_to_word.push(line);
-        // }
-        let lines: Vec<String> = reader
+
+        self.id_to_word = reader
             .lines()
             .map(|r| r.map(|s| s.trim().to_string()))
             .collect::<Result<_, _>>()?;
 
-        self.word_to_id = lines
+        self.word_to_id = self
+            .id_to_word
             .iter()
-            .cloned()
             .enumerate()
-            .map(|(i, w)| (w, i))
+            .map(|(i, w)| (w.clone(), i))
             .collect();
-        self.id_to_word = lines;
         Ok(())
     }
 }
 
-fn main() {
+fn main() -> Result<(), TokenizerError> {
     // Instantiate new Tokenizer and load vocab
     let mut tokenizer = Tokenizer {
         word_to_id: HashMap::new(),
         id_to_word: Vec::new(),
     };
-    tokenizer.load_vocab().unwrap_or_else(|e| {
-        eprintln!("Error loading vocab.txt file");
+    let reader = BufReader::new(File::open("vocab.txt")?);
+    tokenizer.load_vocab(reader).unwrap_or_else(|e| {
+        eprintln!("Error loading vocab.txt file: {}", e);
         std::process::exit(1);
     });
     println!("words length: {:?}", tokenizer.word_to_id.len());
@@ -84,4 +74,5 @@ fn main() {
         .map(|word| tokenizer.word_to_id.get(&word).copied().unwrap_or(0))
         .collect::<Vec<usize>>();
     println!("TokenIds: {:?}", token_vec);
+    Ok(())
 }
