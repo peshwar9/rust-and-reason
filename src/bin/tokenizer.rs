@@ -69,7 +69,7 @@ fn main() -> Result<(), TokenizerError> {
     // Lookup the token for each word in the input text
     let token_vec = input_text
         .into_iter()
-        .map(|word| tokenizer.word_to_id.get(&word).copied().unwrap_or(0))
+        .map(|word| tokenizer.word_to_id.get(&word).copied().unwrap_or(1))
         .collect::<Vec<usize>>();
     println!("TokenIds: {:?}", token_vec);
     Ok(())
