@@ -14,6 +14,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use thiserror::Error;
 
+#[derive(Default)]
 pub struct Tokenizer {
     word_to_id: HashMap<String, usize>,
     id_to_word: Vec<String>,
@@ -27,10 +28,7 @@ pub enum TokenizerError {
 
 impl Tokenizer {
     pub fn new() -> Self {
-        Self {
-            word_to_id: HashMap::new(),
-            id_to_word: Vec::new(),
-        }
+        Self::default()
     }
     // Load from a reader (easy to test)
     pub fn load_vocab<R: BufRead>(&mut self, reader: R) -> Result<(), TokenizerError> {
