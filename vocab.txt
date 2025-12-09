@@ -1,0 +1,12 @@
+<PAD>
+<UNK>
+<BOS>
+<EOS>
+What
+is
+the
+capital
+of
+
+France
+Paris
