@@ -59,7 +59,7 @@ fn main() {
     let embed_dim = 5;
     let embedding = Embedding::from_embeddings(vocab.len(), embed_dim);
 
-    // Get embeddings for some words
+    // Get stored embeddings
     let _ = embedding
         .table
         .iter()
@@ -69,9 +69,19 @@ fn main() {
                 "Embedding for index{:?} with dimension of {:?} is {:?}",
                 i,
                 embedding.embed_dim,
-                embedding.lookup(i)
+                embedding.lookup(i).unwrap_or(&vec![])
             )
         })
         .collect::<Vec<_>>();
-    // Compute cosine similarity between some words
+
+    // Compute cosine similarity between a word pair
+    let similarity_index = embedding
+        .lookup(2)
+        .zip(embedding.lookup(3))
+        .map(|(king, queen)| Embedding::cosine_similarity(king, queen))
+        .unwrap_or(0.0);
+    println!(
+        "Cosine similarity between 'king' and 'queen': {:?}",
+        similarity_index
+    );
 }
