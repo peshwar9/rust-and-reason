@@ -33,3 +33,13 @@ cargo run --bin embedding
 ```
 
 [Read the blog post](https://open.substack.com/pub/rustandreason/p/words-as-vectors-embeddings)
+
+### Day 4: Attention
+
+How tokens see each other?
+
+```bash
+cargo run --bin attention
+```
+
+[Read the blog post](https://open.substack.com/pub/rustandreason/p/day-4-attention-how-tokens-see-each)
